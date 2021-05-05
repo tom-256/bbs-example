@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { Post, PostProps } from "./Post";
+
+const postsMock: PostProps[] = [
+  {
+    title: "test",
+    description: "test description",
+    author: "bob",
+    image:
+      "https://cdn.shibe.online/shibes/5464189a1ded1107e6579b8f39e82937acd37554.jpg",
+    tags: [{ name: "tag1" }, { name: "tag2" }],
+  },
+  {
+    title: "test2",
+    description: "test description",
+    author: "john",
+    image:
+      "https://cdn.shibe.online/shibes/f516c9b186ea3997cf42b0257a9e2dc031af90cd.jpg",
+    tags: [{ name: "tag1" }, { name: "tag2" }],
+  },
+];
 
 function App() {
+  const [posts] = useState<PostProps[]>(postsMock);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+        {posts.map((p) => (
+          <Post {...p}></Post>
+        ))}
+      </div>
     </div>
   );
 }
