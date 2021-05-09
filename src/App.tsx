@@ -12,28 +12,68 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 
-type Post = {
+type PostProps = {
   id: string;
-  content: string;
+  title: string;
+  author: string;
+  description: string;
+  image: string;
+  tags: string[];
 };
 
-const postsMock: Post[] = [
-  { id: "1", content: "task1" },
-  { id: "2", content: "task2" },
-  { id: "3", content: "task3" },
-  { id: "4", content: "task4" },
-  { id: "5", content: "task5" },
-  { id: "6", content: "task6" },
-  { id: "7", content: "task7" },
-  { id: "8", content: "task8" },
-  { id: "9", content: "task9" },
+const postsMock: PostProps[] = [
+  {
+    id: "1",
+    title: "title1",
+    description: "test description",
+    author: "bob",
+    image:
+      "https://cdn.shibe.online/shibes/5464189a1ded1107e6579b8f39e82937acd37554.jpg",
+    tags: ["tag1", "tag2"],
+  },
+  {
+    id: "2",
+    title: "title2",
+    description: "test description",
+    author: "john",
+    image:
+      "https://cdn.shibe.online/shibes/f516c9b186ea3997cf42b0257a9e2dc031af90cd.jpg",
+    tags: ["tag1", "tag2"],
+  },
+  {
+    id: "3",
+    title: "title3",
+    description: "test description",
+    author: "bob",
+    image:
+      "https://cdn.shibe.online/shibes/9e77314c58f019b3c845dbb4c92f329114595def.jpg",
+    tags: ["tag1", "tag2"],
+  },
+  {
+    id: "4",
+    title: "title4",
+    description: "test description",
+    author: "john",
+    image:
+      "https://cdn.shibe.online/shibes/bb3dc550e82c9803caec7d3378b775baa18f5e9a.jpg",
+    tags: ["tag1", "tag2"],
+  },
+  {
+    id: "5",
+    title: "title5",
+    description: "test description",
+    author: "john",
+    image:
+      "https://cdn.shibe.online/shibes/c608636ae06a2a6123f76e4497fe7503593cd52a.jpg",
+    tags: ["tag1", "tag2"],
+  },
 ];
 
 const reorderPosts = (
-  posts: Post[],
+  posts: PostProps[],
   source: DraggableLocation,
   dest: DraggableLocation
-): Post[] => {
+): PostProps[] => {
   const result = Array.from(posts);
   const [removed] = result.splice(source.index, 1);
   result.splice(dest.index, 0, removed);
@@ -62,10 +102,10 @@ const getBoardStyle = (isDraggingOver: boolean) => ({
 });
 
 type BoardProps = {
-  posts: Post[];
+  posts: PostProps[];
 };
 
-const Board: VFC<BoardProps> = ({ posts: tasks }) => {
+const Board: VFC<BoardProps> = ({ posts }) => {
   return (
     <Droppable droppableId={"BSS"} direction="horizontal">
       {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
@@ -74,8 +114,8 @@ const Board: VFC<BoardProps> = ({ posts: tasks }) => {
           {...provided.droppableProps}
           style={getBoardStyle(snapshot.isDraggingOver)}
         >
-          {tasks.map((task, index) => (
-            <Draggable draggableId={task.id} index={index} key={task.id}>
+          {posts.map((post, index) => (
+            <Draggable draggableId={post.id} index={index} key={post.id}>
               {(
                 provided: DraggableProvided,
                 snapshot: DraggableStateSnapshot
@@ -89,7 +129,15 @@ const Board: VFC<BoardProps> = ({ posts: tasks }) => {
                     snapshot.isDragging
                   )}
                 >
-                  <div>{task.content}</div>
+                  <div>{post.title}</div>
+                  <div>{post.description}</div>
+                  <img
+                    src={post.image}
+                    alt="test"
+                    height="50px"
+                    width="50px"
+                  ></img>
+                  <div>{post.author}</div>
                 </div>
               )}
             </Draggable>
@@ -102,7 +150,7 @@ const Board: VFC<BoardProps> = ({ posts: tasks }) => {
 };
 
 const App = () => {
-  const [posts, setPosts] = useState<Post[]>(postsMock);
+  const [posts, setPosts] = useState<PostProps[]>(postsMock);
 
   function onDragEnd(result: DropResult) {
     const { source, destination: dest } = result;
