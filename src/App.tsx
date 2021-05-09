@@ -38,7 +38,7 @@ const postsMock: PostProps[] = [
     author: "john",
     image:
       "https://cdn.shibe.online/shibes/f516c9b186ea3997cf42b0257a9e2dc031af90cd.jpg",
-    tags: ["tag1", "tag2"],
+    tags: ["tag3", "tag4"],
   },
   {
     id: "3",
@@ -47,7 +47,7 @@ const postsMock: PostProps[] = [
     author: "bob",
     image:
       "https://cdn.shibe.online/shibes/9e77314c58f019b3c845dbb4c92f329114595def.jpg",
-    tags: ["tag1", "tag2"],
+    tags: ["tag5", "tag6"],
   },
   {
     id: "4",
@@ -56,7 +56,7 @@ const postsMock: PostProps[] = [
     author: "john",
     image:
       "https://cdn.shibe.online/shibes/bb3dc550e82c9803caec7d3378b775baa18f5e9a.jpg",
-    tags: ["tag1", "tag2"],
+    tags: ["tag7", "tag8"],
   },
   {
     id: "5",
@@ -65,7 +65,7 @@ const postsMock: PostProps[] = [
     author: "john",
     image:
       "https://cdn.shibe.online/shibes/c608636ae06a2a6123f76e4497fe7503593cd52a.jpg",
-    tags: ["tag1", "tag2"],
+    tags: ["tag9", "tag10"],
   },
 ];
 
@@ -151,6 +151,7 @@ const Board: VFC<BoardProps> = ({ posts }) => {
 
 const App = () => {
   const [posts, setPosts] = useState<PostProps[]>(postsMock);
+  const [searchQuery, setQuery] = useState<string>("");
 
   function onDragEnd(result: DropResult) {
     const { source, destination: dest } = result;
@@ -164,11 +165,34 @@ const App = () => {
     setPosts(ordered);
   }
 
+  const filterPosts = (query: string): PostProps[] => {
+    if (query === "") return postsMock;
+    return postsMock.filter((post) => {
+      return post.tags.some((tag) => tag.includes(query));
+    });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setQuery(query);
+    console.log(query);
+    const newPosts = filterPosts(query);
+    console.log("newposts", newPosts);
+    setPosts(newPosts);
+  };
+
   return (
     <div className="App">
       <div>
+        <input
+          value={searchQuery}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleInputChange(event);
+          }}
+          placeholder={`search`}
+        />
         <DragDropContext onDragEnd={onDragEnd}>
-          <Board posts={posts}></Board>
+          <Board posts={searchQuery ? filterPosts(searchQuery) : posts}></Board>
         </DragDropContext>
       </div>
     </div>
