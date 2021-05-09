@@ -1,4 +1,4 @@
-import { useReducer, VFC } from "react";
+import { useState, VFC } from "react";
 import "./App.css";
 import {
   DragDropContext,
@@ -12,65 +12,32 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 
-type Task = {
+type Post = {
   id: string;
   content: string;
 };
 
-type Boards = {
-  [status in TaskStatus]: Task[];
-};
+const postsMock: Post[] = [
+  { id: "1", content: "task1" },
+  { id: "2", content: "task2" },
+  { id: "3", content: "task3" },
+  { id: "4", content: "task4" },
+  { id: "5", content: "task5" },
+  { id: "6", content: "task6" },
+  { id: "7", content: "task7" },
+  { id: "8", content: "task8" },
+  { id: "9", content: "task9" },
+];
 
-type TaskStatus = "TODO" | "DOING" | "DONE";
-
-const boardMock: Boards = {
-  TODO: [
-    { id: "1", content: "task1" },
-    { id: "2", content: "task2" },
-    { id: "3", content: "task3" },
-    { id: "4", content: "task4" },
-    { id: "5", content: "task5" },
-    { id: "6", content: "task6" },
-    { id: "7", content: "task7" },
-    { id: "8", content: "task8" },
-    { id: "9", content: "task9" },
-  ],
-  DOING: [],
-  DONE: [],
-};
-
-const reorderTasks = (
-  boards: Boards,
+const reorderPosts = (
+  posts: Post[],
   source: DraggableLocation,
   dest: DraggableLocation
-): Boards => {
-  const id = droppableIdToTaskStatus(source.droppableId);
-  const tasks = boards[id];
-  const result = Array.from(tasks);
+): Post[] => {
+  const result = Array.from(posts);
   const [removed] = result.splice(source.index, 1);
   result.splice(dest.index, 0, removed);
-  const newBoads = { ...boards };
-  newBoads[id] = result;
-  return newBoads;
-};
-
-const moveBoards = (
-  boards: Boards,
-  source: DraggableLocation,
-  dest: DraggableLocation
-): Boards => {
-  const sourceId = droppableIdToTaskStatus(source.droppableId);
-  const destId = droppableIdToTaskStatus(dest.droppableId);
-  const sourceTasks = boards[sourceId];
-  const destTasks = boards[destId];
-  const sourceClone = [...sourceTasks];
-  const destClone = [...destTasks];
-  const [removed] = sourceClone.splice(source.index, 1);
-  destClone.splice(dest.index, 0, removed);
-  const newBoads = { ...boards };
-  newBoads[sourceId] = sourceClone;
-  newBoads[destId] = destClone;
-  return newBoads;
+  return result;
 };
 
 const grid: number = 8;
@@ -94,18 +61,13 @@ const getBoardStyle = (isDraggingOver: boolean) => ({
   minHeight: "100px",
 });
 
-const droppableIdToTaskStatus = (id: string): TaskStatus => {
-  return id as TaskStatus;
-};
-
 type BoardProps = {
-  name: TaskStatus;
-  tasks: Task[];
+  posts: Post[];
 };
 
-const Board: VFC<BoardProps> = ({ name, tasks }) => {
+const Board: VFC<BoardProps> = ({ posts: tasks }) => {
   return (
-    <Droppable droppableId={name} direction="horizontal">
+    <Droppable droppableId={"BSS"} direction="horizontal">
       {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
         <div
           ref={provided.innerRef}
@@ -139,26 +101,8 @@ const Board: VFC<BoardProps> = ({ name, tasks }) => {
   );
 };
 
-type BoardAction = {
-  type: "move" | "reorder";
-  source: DraggableLocation;
-  dest: DraggableLocation;
-};
-
-const boardReducer = (boards: Boards, action: BoardAction): Boards => {
-  const { type, source, dest } = action;
-  switch (type) {
-    case "reorder":
-      return reorderTasks(boards, source, dest);
-    case "move":
-      return moveBoards(boards, source, dest);
-    default:
-      return boards;
-  }
-};
-
 const App = () => {
-  const [boards, boardsDispatch] = useReducer(boardReducer, boardMock);
+  const [posts, setPosts] = useState<Post[]>(postsMock);
 
   function onDragEnd(result: DropResult) {
     const { source, destination: dest } = result;
@@ -167,18 +111,16 @@ const App = () => {
     const { droppableId: sourceId } = source;
     const { droppableId: destinationId } = dest;
 
-    if (sourceId === destinationId) {
-      boardsDispatch({ type: "reorder", source, dest });
-    } else {
-      boardsDispatch({ type: "move", source, dest });
-    }
+    if (sourceId !== destinationId) return;
+    const ordered = reorderPosts(posts, source, dest);
+    setPosts(ordered);
   }
 
   return (
     <div className="App">
       <div>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Board name={"TODO"} tasks={boards.TODO}></Board>
+          <Board posts={posts}></Board>
         </DragDropContext>
       </div>
     </div>
