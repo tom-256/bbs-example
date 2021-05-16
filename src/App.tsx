@@ -68,11 +68,11 @@ const Post: VFC<PostProps> = ({ title, description, author, tags }) => {
   return (
     <div className="post">
       <p>{title}</p>
-      <p>{description}</p>
       <Document file="sample.pdf" onLoadError={console.error}>
         <Page pageNumber={1} width={500} className="page" />
       </Document>
       <p>{`作成者:${author}`}</p>
+      <p>{`備考:${description}`}</p>
       <p>{tags.join(",")}</p>
     </div>
   );
