@@ -40,3 +40,9 @@
 .page {
   display: inline-block;
 }
+
+.post {
+  background-color: gray;
+  border: solid;
+  display: inline-block;
+}

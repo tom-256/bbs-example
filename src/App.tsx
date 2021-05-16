@@ -64,27 +64,26 @@ type BoardProps = {
   posts: PostProps[];
 };
 
+const Post: VFC<PostProps> = ({ title, description, author, tags }) => {
+  return (
+    <div className="post">
+      <p>{title}</p>
+      <p>{description}</p>
+      <Document file="sample.pdf" onLoadError={console.error}>
+        <Page pageNumber={1} width={500} className="page" />
+      </Document>
+      <p>{`作成者:${author}`}</p>
+      <p>{tags.join(",")}</p>
+    </div>
+  );
+};
+
 const Board: VFC<BoardProps> = ({ posts }) => {
   return (
     <div>
-      {posts.map((post, index) => (
-        <div
-          key={index}
-          style={{
-            backgroundColor: "gray",
-            border: "solid",
-            display: "inline-block",
-          }}
-        >
-          <p>{post.title}</p>
-          <p>{post.description}</p>
-          <Document file="sample.pdf" onLoadError={console.error}>
-            <Page pageNumber={1} width={500} className="page" />
-          </Document>
-          <p>{`作成者:${post.author}`}</p>
-          <p>{post.tags.join(",")}</p>
-        </div>
-      ))}
+      {posts.map((post, index) => {
+        return <Post key={index} {...post} />;
+      })}
     </div>
   );
 };
