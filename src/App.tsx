@@ -1,4 +1,6 @@
 import { useState, VFC } from "react";
+import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
+
 import "./App.css";
 
 type PostProps = {
@@ -101,14 +103,9 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        <input
-          value={searchQuery}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            handleInputChange(event);
-          }}
-          placeholder={`search`}
-        />
-        <Board posts={searchQuery ? filterPosts(searchQuery) : posts}></Board>
+        <Document file="sample.pdf" onLoadError={console.error}>
+          <Page pageNumber={1} />
+        </Document>
       </div>
     </div>
   );
