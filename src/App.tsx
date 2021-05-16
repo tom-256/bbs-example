@@ -68,12 +68,21 @@ const Board: VFC<BoardProps> = ({ posts }) => {
   return (
     <div>
       {posts.map((post, index) => (
-        <div>
-          <div>{post.title}</div>
-          <div>{post.description}</div>
-          <img src={post.image} alt="test" height="50px" width="50px"></img>
-          <div>{post.author}</div>
-          <div>{post.tags}</div>
+        <div
+          key={index}
+          style={{
+            backgroundColor: "gray",
+            border: "solid",
+            display: "inline-block",
+          }}
+        >
+          <p>{post.title}</p>
+          <p>{post.description}</p>
+          <Document file="sample.pdf" onLoadError={console.error}>
+            <Page pageNumber={1} width={500} className="page" />
+          </Document>
+          <p>{`作成者:${post.author}`}</p>
+          <p>{post.tags.join(",")}</p>
         </div>
       ))}
     </div>
@@ -103,9 +112,14 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        <Document file="sample.pdf" onLoadError={console.error}>
-          <Page pageNumber={1} />
-        </Document>
+        <input
+          value={searchQuery}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleInputChange(event);
+          }}
+          placeholder={`search`}
+        />
+        <Board posts={searchQuery ? filterPosts(searchQuery) : posts}></Board>
       </div>
     </div>
   );
