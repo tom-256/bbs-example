@@ -64,13 +64,57 @@ type BoardProps = {
   posts: PostProps[];
 };
 
+type Hoge = {
+  numPages: number;
+};
+
 const Post: VFC<PostProps> = ({ title, description, author, tags }) => {
+  const [numPages, setNumPages] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const onDocumentLoadSuccess = (h: Hoge) => {
+    const numPages = h.numPages;
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
+
+  const changePage = (offset: number) => {
+    setPageNumber((prevPageNumber) => prevPageNumber + offset);
+  };
+
+  const previousPage = () => {
+    changePage(-1);
+  };
+
+  const nextPage = () => {
+    changePage(1);
+  };
+
   return (
     <div className="post">
       <p>{title}</p>
-      <Document file="sample.pdf" onLoadError={console.error}>
-        <Page pageNumber={1} width={500} className="page" />
+      <Document
+        file="sample.pdf"
+        onLoadSuccess={onDocumentLoadSuccess}
+        onLoadError={console.error}
+      >
+        <Page pageNumber={pageNumber} width={500} className="page" />
       </Document>
+      <div>
+        <p>
+          Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+        </p>
+        <button type="button" disabled={pageNumber <= 1} onClick={previousPage}>
+          Previous
+        </button>
+        <button
+          type="button"
+          disabled={pageNumber >= numPages}
+          onClick={nextPage}
+        >
+          Next
+        </button>
+      </div>
       <p>{`作成者:${author}`}</p>
       <p>{`備考:${description}`}</p>
       <p>{tags.join(",")}</p>
