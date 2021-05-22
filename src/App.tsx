@@ -61,10 +61,6 @@ const postsMock: PostProps[] = [
   },
 ];
 
-type BoardProps = {
-  posts: PostProps[];
-};
-
 type LoadSuccess = {
   numPages: number;
 };
@@ -123,16 +119,6 @@ const Post: VFC<PostProps> = ({ title, description, author, tags }) => {
   );
 };
 
-const Board: VFC<BoardProps> = ({ posts }) => {
-  return (
-    <div>
-      {posts.map((post, index) => {
-        return <Post key={index} {...post} />;
-      })}
-    </div>
-  );
-};
-
 const App = () => {
   const [posts, setPosts] = useState<PostProps[]>(postsMock);
   const [searchQuery, setQuery] = useState<string>("");
@@ -154,14 +140,21 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        <input
-          value={searchQuery}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            handleInputChange(event);
-          }}
-          placeholder={`search`}
-        />
-        <Board posts={searchQuery ? filterPosts(searchQuery) : posts}></Board>
+        <div>
+          <p style={{ display: "inline-block" }}>検索:</p>
+          <input
+            value={searchQuery}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              handleInputChange(event);
+            }}
+            placeholder={`search`}
+          />
+        </div>
+        <div>
+          {posts.map((post, index) => {
+            return <Post key={index} {...post} />;
+          })}
+        </div>
       </div>
     </div>
   );
