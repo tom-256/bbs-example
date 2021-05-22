@@ -146,9 +146,7 @@ const App = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setQuery(query);
-    console.log(query);
     const newPosts = filterPosts(query);
-    console.log("newposts", newPosts);
     setPosts(newPosts);
   };
 
