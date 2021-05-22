@@ -64,7 +64,7 @@ type BoardProps = {
   posts: PostProps[];
 };
 
-type Hoge = {
+type LoadSuccess = {
   numPages: number;
 };
 
@@ -72,8 +72,8 @@ const Post: VFC<PostProps> = ({ title, description, author, tags }) => {
   const [numPages, setNumPages] = useState(1);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const onDocumentLoadSuccess = (h: Hoge) => {
-    const numPages = h.numPages;
+  const onDocumentLoadSuccess = (arg: LoadSuccess) => {
+    const numPages = arg.numPages;
     setNumPages(numPages);
     setPageNumber(1);
   };
